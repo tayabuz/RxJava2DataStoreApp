@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.datastore.preferences.SharedPreferencesMigration
 import androidx.datastore.preferences.rxjava2.rxPreferencesDataStore
 import com.example.rxjava2datastoreapp.databinding.SettingsActivityBinding
+import com.google.gson.Gson
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -55,6 +56,34 @@ class SettingsActivity : AppCompatActivity() {
             it.printStackTrace()
         })
 
+        var c = userPreferencesRepository.getObjectList<Cat>(UserPreferencesRepository.catsInJSONString).subscribe({
+
+            println("getPropertyCatsJSON() ->  result: $it")
+
+        },{
+            it.printStackTrace()
+        })
+
+        userPreferencesRepository.getObject(UserPreferencesRepository.cat, Cat(1f, "Ted", "Sokoke")).subscribe({
+
+            println("getPropertyCat() ->  result: $it")
+            it.age
+            var r = it
+            val t = 0
+
+        }, {
+            it.printStackTrace()
+        })
+
+        var cat = Cat(2f, "Masik", "Bengal")
+
+        var cat1 = Cat(3f, "Manya", "Korat")
+
+        var cat2 = Cat(5f, "Shao", "Manx")
+
+        var cats = listOf(cat, cat1, cat2)
+
+
         binding.buttonSave.setOnClickListener {
             userPreferencesRepository.set(
                 UserPreferencesRepository.bool, binding.switchValue.isChecked)
@@ -63,7 +92,15 @@ class SettingsActivity : AppCompatActivity() {
             userPreferencesRepository.set(UserPreferencesRepository.set, setOf("test", "qwerty"))
             userPreferencesRepository.delete(UserPreferencesRepository.int)
 
+            userPreferencesRepository.setObject(UserPreferencesRepository.catsInJSONString, cats)
+            userPreferencesRepository.setObject(UserPreferencesRepository.cat, cat)
         }
 
+    }
+
+    fun calcActionTime(tag: String, action : () -> Unit) {
+        val startTime = System.currentTimeMillis()
+        action()
+        println("$tag . -> Time: ${System.currentTimeMillis() - startTime}")
     }
 }
